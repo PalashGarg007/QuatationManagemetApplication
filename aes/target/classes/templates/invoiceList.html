@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice List</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function updateStatus(billNo, status, type) {
+            $.ajax({
+                url: `/admin/set${type}/id/${billNo}/value/${status}`,
+                method: 'POST',
+                success: function() {
+                    location.reload();
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            $('.accept-switch').change(function() {
+                const billNo = $(this).data('billno');
+                const status = $(this).prop('checked');
+                updateStatus(billNo, status, 'Accept');
+            });
+
+            $('.emb-switch').change(function() {
+                const billNo = $(this).data('billno');
+                const status = $(this).prop('checked');
+                updateStatus(billNo, status, 'Emb');
+            });
+
+            $('#prevPage').click(function() {
+                const currentPage = parseInt($('#pageNo').val());
+                if (currentPage > 1) {
+                    window.location.href = `/admin/allInvoice/page/${currentPage - 1}`;
+                }
+            });
+
+            $('#nextPage').click(function() {
+                const currentPage = parseInt($('#pageNo').val());
+                window.location.href = `/admin/allInvoice/page/${currentPage + 1}`;
+            });
+        });
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .invoice-box {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+            position: relative;
+            background-color: #f9f9f9;
+        }
+        .invoice-box.highlight-billNo {
+            background-color: #e0f7fa;
+        }
+        .invoice-box.highlight-emb {
+            background-color: #e8f5e9;
+        }
+        .tick {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: green;
+            font-size: 24px;
+        }
+        .switch-container {
+            margin: 10px 0;
+        }
+        .switch {
+            display: inline-block;
+            position: relative;
+            width: 34px;
+            height: 20px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 50px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 12px;
+            width: 12px;
+            border-radius: 50%;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+        }
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+        input:checked + .slider:before {
+            transform: translateX(14px);
+        }
+        .pagination {
+            margin-top: 20px;
+        }
+        .pagination button {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Invoice List</h1>
+    <input type="hidden" id="pageNo" value="${pageNo}"/>
+    <div th:each="invoice : ${invoices}" class="invoice-box"
+         th:classappend="${invoice.accepted} ? 'highlight-emb' : ''">
+        <div th:if="${invoice.accepted}" class="tick">✓</div>
+        <p><strong>Bill No:</strong> <span th:text="${invoice.billNo}" class="highlight-billNo"></span>
+        <strong>Order No:</strong> <span th:text="${invoice.orderNo}"></span></p>
+        <p>Bill Date:<span th:text="${invoice.billDate}"></span></p>
+        <p>Order Date:<span th:text="${invoice.orderDate}"></span></p>
+        <p><strong>Location:</strong> <span th:text="${invoice.location}"></span></p>
+        <p><strong>Emb:</strong> <span th:text="${invoice.emb} ? 'given' : 'received'" class="highlight-emb"></span></p>
+        <div class="switch-container">
+            <label class="switch">
+                <input type="checkbox" th:checked="${invoice.accepted}" class="accept-switch" data-billno="${invoice.billNo}">
+                <span class="slider"></span>
+            </label>
+            <span>Accepted</span>
+        </div>
+        <div class="switch-container">
+            <label class="switch">
+                <input type="checkbox" th:checked="${invoice.emb}" class="emb-switch" data-billno="${invoice.billNo}">
+                <span class="slider"></span>
+            </label>
+            <span>Emb</span>
+        </div>
+    </div>
+    <div class="pagination">
+        <button id="prevPage">Previous</button>
+        <button id="nextPage">Next</button>
+    </div>
+</body>
+</html>

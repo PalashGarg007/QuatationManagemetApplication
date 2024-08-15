@@ -1,0 +1,22 @@
+{"properties": [
+  {
+    "name": "driverClassName",
+    "type": "java.lang.String",
+    "description": "driverClassName for the Data Source Bean"
+  },
+  {
+    "name": "url",
+    "type": "java.lang.String",
+    "description": "url for the Data Source Bean"
+  },
+  {
+    "name": "password",
+    "type": "java.lang.String",
+    "description": "password for the Data Source Bean"
+  },
+  {
+    "name": "username",
+    "type": "java.lang.String",
+    "description": "username for the Data Source Bean"
+  }
+]}
