@@ -51,7 +51,7 @@ public class AdminServiceImpl implements AdminService{
 	@Override
 	@Transactional
 	public InvoiceFrontView updateInvoice(Integer billNo, Invoice newInvoice) {
-		Invoice oldInvoice = adminRepository.getReferenceById(billNo);
+		Invoice oldInvoice = adminRepository.findById(billNo).orElse(null);
 		if(oldInvoice==null) throw new InvalidParameterException("billNo does not exists");
 		
 		if(newInvoice.getEmb() != null) oldInvoice.setEmb(newInvoice.getEmb());
@@ -115,7 +115,7 @@ public class AdminServiceImpl implements AdminService{
 	@Override
 	@Transactional
 	public void setEmb(Boolean emb, Integer billNo) {
-		Invoice oldInvoice = adminRepository.getReferenceById(billNo);
+		Invoice oldInvoice = adminRepository.findById(billNo).orElse(null);
 		if(oldInvoice==null) throw new InvalidParameterException("billNo does not exists");
 		
 		oldInvoice.setEmb(emb);
@@ -126,7 +126,7 @@ public class AdminServiceImpl implements AdminService{
 	@Override
 	@Transactional
 	public void setAccept(Boolean accept, Integer billNo) {
-		Invoice oldInvoice = adminRepository.getReferenceById(billNo);
+		Invoice oldInvoice = adminRepository.findById(billNo).orElse(null);
 		if(oldInvoice==null) throw new InvalidParameterException("billNo does not exists");
 		
 		oldInvoice.setAccepted(accept);
