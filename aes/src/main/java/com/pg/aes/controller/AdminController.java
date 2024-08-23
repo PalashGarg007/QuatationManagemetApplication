@@ -8,24 +8,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.pg.aes.dao.InvoiceFrontView;
 import com.pg.aes.entity.Invoice;
 import com.pg.aes.service.AdminService;
 
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
-
-@Controller
+@RestController
 @RequestMapping("/admin")
 public class AdminController {
 	
@@ -37,30 +35,16 @@ public class AdminController {
 	@GetMapping("/")
 	public String admin() {
 		return "admin";
-		
 	}
 	
-//	@GetMapping(value = "/allInvoice/page/{pageNo}", produces = MediaType.APPLICATION_JSON_VALUE)
-//	public ResponseEntity<List<InvoiceFrontView>> allInvoice(@PathVariable Integer pageNo) {
-//		List<InvoiceFrontView> invoices = adminService.allInvoice(pageNo - 1).getContent();
-//		
-//		logger.info("List of all the invoice on "+ pageNo +" :\n"+ invoices);
-//		
-//		return (invoices.isEmpty()) ? ResponseEntity.status(HttpStatus.NO_CONTENT).body(null):
-//			ResponseEntity.ok(invoices);
-//	}
-	
-	@GetMapping("/allInvoice/page/{pageNo}")
-	public ModelAndView allInvoice(@PathVariable Integer pageNo) {
+	@GetMapping(value = "/allInvoice/page/{pageNo}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<InvoiceFrontView>> allInvoice(@PathVariable Integer pageNo) {
 		List<InvoiceFrontView> invoices = adminService.allInvoice(pageNo - 1).getContent();
-		
-		ModelAndView modelAndView = new ModelAndView("invoiceList");
-		modelAndView.addObject("invoices", invoices);
-	    modelAndView.addObject("pageNo", pageNo);
 		
 		logger.info("List of all the invoice on "+ pageNo +" :\n"+ invoices);
 		
-		return modelAndView;
+		return (invoices.isEmpty()) ? ResponseEntity.status(HttpStatus.NO_CONTENT).body(null):
+			ResponseEntity.ok(invoices);
 	}
 	
 	@GetMapping(value = "/allInvoiceFromLocation/location/{location}/page/{pageNo}", produces = MediaType.APPLICATION_JSON_VALUE)
